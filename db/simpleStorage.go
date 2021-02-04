@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -148,11 +149,11 @@ func (s *Simple) insert(db string, col string, doc bson.A) bson.M {
 func (s *Simple) delete(db string, col string, opt bson.M) bson.M {
 	collection := s.getDb(db, col)
 	q := opt["q"].(bson.M)
-	limit := int(opt["limit"].(float64))
+	limit, _ := strconv.ParseInt(fmt.Sprint(opt["limit"]), 10, 32)
 	n := 0
 	docs := collection.docs
 	for k, d := range docs {
-		if n >= limit && limit>0 {
+		if n >= int(limit) && limit>0 {
 			break
 		}
 		m := isPatternMatch(d, q)
