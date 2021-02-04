@@ -58,9 +58,9 @@ func (s *Server) run() error {
 	return nil
 }
 
-func (s *Server) Stop() {
-	//TODO stop
-}
+// func (s *Server) Stop() {
+// 	//TODO stop
+// }
 
 func (s *Server) handle(c net.Conn) {
 	defer c.Close()

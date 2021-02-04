@@ -7,6 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+/*
+BUILDINFO response for buildinfo: 1
+*/
 var BUILDINFO = bson.M{
 	"version":          "4.4.0",
 	"gitVersion":       "ad91a93a5a31e175f5cbf8c69561e788bbc55ce1",

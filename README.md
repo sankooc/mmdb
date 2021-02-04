@@ -3,7 +3,7 @@
 
 ## MMDB
 
-In-*memory* *MongoDB* Server written with pure golang  to use in place of a live mongodb in your unit tests
+In-*memory* *MongoDB* Server written with pure golang  to use in place of mongodb in your unit tests
 
 
 
@@ -154,7 +154,7 @@ connect witch mongo-cli
 | $rename| ❌ |
 | $currentDate| ❌ |
 
-#### Query Operator
+#### Query Operators
 
 |  opt |   -  |
 | ---- | ---- |

@@ -2,6 +2,7 @@ package db
 
 import "go.mongodb.org/mongo-driver/bson"
 
+// MongoMessage mongo common message
 type MongoMessage struct {
 	Length     uint32
 	RequestID  uint32
