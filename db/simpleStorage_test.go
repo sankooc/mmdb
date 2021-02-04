@@ -2,12 +2,13 @@ package db
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
 )
 
-func Test(t *testing.T){
+func Test(t *testing.T) {
 	storage := &Simple{collections: make(map[string]*MemoryCollection)}
 	var db = "test"
 	var col = "usr"
@@ -29,7 +30,7 @@ func Test(t *testing.T){
 		assert.Equal(t, len(list), 4)
 	}
 	{
-		rs := storage.delete(db, col, bson.M{ "q": bson.M{ "name": "aa" }, "limit": 2 })
+		rs := storage.delete(db, col, bson.M{"q": bson.M{"name": "aa"}, "limit": 2})
 		assert.Equal(t, rs["ok"], 1)
 		assert.Equal(t, rs["n"], 2)
 	}

@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
 	"hash/crc32"
 	"io"
 	"log"
 	"os"
 	"strings"
 	"sync"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var requestIDLock sync.Mutex
@@ -65,7 +66,7 @@ func readUInt8(reader *bytes.Reader) byte {
 	//buf := make([]byte, 1)
 	//reader.Read(buf)
 	//return buf[0]
-	c,_ := reader.ReadByte()
+	c, _ := reader.ReadByte()
 	return c
 }
 
@@ -152,7 +153,7 @@ func parseSection(reader *bytes.Reader) ([]Section, []Section) {
 }
 
 func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
-	msg := &M2013Reply{Message: req.Message, FlagBits: 0 }
+	msg := &M2013Reply{Message: req.Message, FlagBits: 0}
 	msg.Message.ResponseTo = req.Message.RequestID
 	msg.Message.RequestID = newRequest()
 
@@ -181,7 +182,7 @@ func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
 			msg.sections = []Section{WARNING}
 		} else if section["ismaster"] != nil {
 			msg.sections = []Section{ISMASTER}
-		} else if  ns != nil {
+		} else if ns != nil {
 			dbname := section["$db"].(string)
 			Debug(" $db [%v] dbname\r\n", dbname)
 			if section["find"] != nil {
@@ -226,8 +227,8 @@ func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
 	return msg
 }
 
-func handle2004(req *M2004, engine MongoEngine) *M2004Reply{
-	cmd, _:= req.Command()
+func handle2004(req *M2004, engine MongoEngine) *M2004Reply {
+	cmd, _ := req.Command()
 
 	msg := &M2004Reply{Message: req.Message}
 	msg.Message.ResponseTo = req.Message.RequestID
@@ -263,10 +264,10 @@ func process2013(msg *MongoMessage) *M2013 {
 	//Message := &msg
 	// fix
 	msg.Data = []byte{}
-	return &M2013{Message: msg, FlagBits: int(flagBits),Meta: Meta, Sections: Sections }
+	return &M2013{Message: msg, FlagBits: int(flagBits), Meta: Meta, Sections: Sections}
 }
 
-func process2004 (msg *MongoMessage) *M2004 {
+func process2004(msg *MongoMessage) *M2004 {
 	reader := bytes.NewReader(msg.Data)
 	flag := readUInt32(reader)
 	Debug("flag %d \r\n", flag)
@@ -278,11 +279,11 @@ func process2004 (msg *MongoMessage) *M2004 {
 	Debug("NumberToSkip %d \r\n", NumberToSkip)
 	Debug("NumberToReturn %d \r\n", NumberToReturn)
 	rs := &M2004{
-		Message: msg,
-		Flag: int(flag),
+		Message:            msg,
+		Flag:               int(flag),
 		FullCollectionName: FullCollectionName,
-		NumberToSkip: NumberToSkip,
-		NumberToReturn: NumberToReturn,
+		NumberToSkip:       NumberToSkip,
+		NumberToReturn:     NumberToReturn,
 	}
 	unmarshalDoc(reader, &rs.Doc)
 	Debug("section %v \r\n", rs.Doc)
@@ -329,7 +330,7 @@ func write2013(w io.Writer, msg *M2013Reply) error {
 	return nil
 }
 
-func write2001(w io.Writer, m *M2004Reply){
+func write2001(w io.Writer, m *M2004Reply) {
 	var out bytes.Buffer
 	writeUint32(&out, m.Flag)
 	writeUint64(&out, m.CursorID)
@@ -349,7 +350,6 @@ func write2001(w io.Writer, m *M2004Reply){
 	}
 	m.Message.Data = out.Bytes()
 	m.Message.Length = uint32(out.Len() + 16)
-
 
 	var out2 bytes.Buffer
 	writeUint32(&out2, m.Message.Length)
@@ -403,8 +403,7 @@ func isPatternMatch(doc, pattern bson.M) bool {
 	return true
 }
 
-
-func updateDoc(doc bson.M ,modify bson.M) error{
+func updateDoc(doc bson.M, modify bson.M) error {
 	for k, v := range modify {
 		unsuppErr := fmt.Errorf("unsupported update operator: %q", k)
 		switch k {

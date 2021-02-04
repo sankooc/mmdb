@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 )
 
-func insertMany(){
+func insertMany() {
 	data, _ := ioutil.ReadFile("../asset/req.insertMany.dump")
 	fmt.Println(data)
 	c := bytes.NewReader(data)
@@ -18,7 +18,7 @@ func insertMany(){
 	}
 }
 
-func insertOne(){
+func insertOne() {
 	data, _ := ioutil.ReadFile("../asset/req.insertOne.dump")
 	fmt.Println(data)
 	c := bytes.NewReader(data)
@@ -29,6 +29,7 @@ func insertOne(){
 		fmt.Println(err)
 	}
 }
+
 //func TestMaster(t *testing.T){
 //	data, _ := ioutil.ReadFile("../asset/req.master.dump")
 //	c := bytes.NewReader(data)

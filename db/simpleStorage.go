@@ -106,7 +106,7 @@ func (s *Simple) command(utype string, cmd string, arg string) bson.M {
 			"firstBatch": bson.A{},
 		}}
 	case "getLastError", "getlasterror":
-		return okReply()// TODO
+		return okReply() // TODO
 	default:
 		return okReply()
 	}
@@ -114,10 +114,10 @@ func (s *Simple) command(utype string, cmd string, arg string) bson.M {
 	return nil
 }
 
-func (s *Simple) getDb(db string, col string) *MemoryCollection{
+func (s *Simple) getDb(db string, col string) *MemoryCollection {
 	var cols *MemoryCollection = s.collections[col]
 	if cols == nil {
-		cols = &MemoryCollection{ docs: make(map[string]bson.M) }
+		cols = &MemoryCollection{docs: make(map[string]bson.M)}
 		s.collections[col] = cols
 	}
 	return cols
@@ -133,7 +133,7 @@ func (s *Simple) insert(db string, col string, doc bson.A) bson.M {
 			d := dc.(bson.M)
 			//delete(d, "name")
 			id := d["_id"]
-			if id == nil{
+			if id == nil {
 				id = primitive.NewObjectID()
 				d["_id"] = id
 			}
@@ -141,9 +141,9 @@ func (s *Simple) insert(db string, col string, doc bson.A) bson.M {
 			Debug(" %s \r\n", _id)
 			docs[_id] = d
 		}
-		return bson.M{ "n" : size, "ok" : 1 }
+		return bson.M{"n": size, "ok": 1}
 	}
-	return bson.M{ "n" : size, "ok" : 0 }
+	return bson.M{"n": size, "ok": 0}
 }
 
 func (s *Simple) delete(db string, col string, opt bson.M) bson.M {
@@ -153,7 +153,7 @@ func (s *Simple) delete(db string, col string, opt bson.M) bson.M {
 	n := 0
 	docs := collection.docs
 	for k, d := range docs {
-		if n >= int(limit) && limit>0 {
+		if n >= int(limit) && limit > 0 {
 			break
 		}
 		m := isPatternMatch(d, q)
@@ -162,7 +162,7 @@ func (s *Simple) delete(db string, col string, opt bson.M) bson.M {
 			delete(docs, k)
 		}
 	}
-	return bson.M{ "ok": 1, "n": n }
+	return bson.M{"ok": 1, "n": n}
 }
 
 func (s *Simple) query(db string, col string, query bson.M) bson.M {
@@ -178,8 +178,8 @@ func (s *Simple) query(db string, col string, query bson.M) bson.M {
 	return bson.M{
 		"cursor": bson.M{
 			"firstBatch": matchs,
-			"id": int64(0),
-			"ns": fmt.Sprintf("%s.%s", db, col),
+			"id":         int64(0),
+			"ns":         fmt.Sprintf("%s.%s", db, col),
 		},
 		"ok": 1,
 	}
@@ -198,10 +198,10 @@ func asBsonM(v interface{}) (bson.M, error) {
 	return nil, fmt.Errorf("cannot resolve %q to bson.M", v)
 }
 
-func (s *Simple) update(db string, col string, opt bson.M) bson.M{
+func (s *Simple) update(db string, col string, opt bson.M) bson.M {
 	collection := s.getDb(db, col)
 	docs := collection.docs
-	rs := bson.M{"n":0,"nModified":0,"ok":1}
+	rs := bson.M{"n": 0, "nModified": 0, "ok": 1}
 	query := opt["q"].(bson.M)
 	up := opt["u"].(bson.M)
 	multi := opt["multi"] == true
@@ -210,15 +210,15 @@ func (s *Simple) update(db string, col string, opt bson.M) bson.M{
 	n := 0
 	for _, d := range docs {
 		m := isPatternMatch(d, query)
-		if m == true && ( multi || nModified <= 0 ) {
+		if m == true && (multi || nModified <= 0) {
 			err := updateDoc(d, up)
 			if err != nil {
 				nModified += 1
-				n +=1
+				n += 1
 			}
 		}
 	}
-	if nModified == 0 && upsert{
+	if nModified == 0 && upsert {
 		n += 1
 		// create
 	}

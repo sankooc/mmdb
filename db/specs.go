@@ -11,20 +11,21 @@ type MongoMessage struct {
 }
 
 type M2013 struct {
-	Message *MongoMessage
+	Message  *MongoMessage
 	FlagBits int
-	Meta []Section
+	Meta     []Section
 	Sections []Section
 }
 type M2004 struct {
-	Message *MongoMessage
-	Flag int
-	FullCollectionName string
-	NumberToSkip uint32
-	NumberToReturn uint32
-	Doc bson.D
+	Message              *MongoMessage
+	Flag                 int
+	FullCollectionName   string
+	NumberToSkip         uint32
+	NumberToReturn       uint32
+	Doc                  bson.D
 	ReturnFieldsSelector bson.D
 }
+
 func (m *M2004) Command() (cmd string, arg interface{}) {
 	for _, kv := range m.Doc {
 		return kv.Key, kv.Value
@@ -42,17 +43,17 @@ func (m *M2004) Get(key string) (interface{}, bool) {
 }
 
 type M2013Reply struct {
-	Message *MongoMessage
+	Message  *MongoMessage
 	FlagBits int
 	sections []Section
 }
 type M2004Reply struct {
-	Message *MongoMessage
-	Flag uint32
-	CursorID uint64
-	StartingFrom uint32
+	Message        *MongoMessage
+	Flag           uint32
+	CursorID       uint64
+	StartingFrom   uint32
 	NumberReturned uint32
-	Docs []interface{}
+	Docs           []interface{}
 }
 
 type Body1 bson.M
