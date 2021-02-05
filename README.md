@@ -97,9 +97,9 @@ connect witch mongo-cli
 | insert | ✔️ |
 | deleteOne | ✔️ |
 | insertMany | ✔️ |
-| count | ❌ |
+| count | ✔️ |
 | countDocuments | ❌ |
-| findOne | ❌ |
+| findOne | ✔️ |
 | deleteMany | ❌ |
 | replaceOne | ❌ |
 | findAndModify | ❌ |

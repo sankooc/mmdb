@@ -156,7 +156,7 @@ func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
 	msg := &M2013Reply{Message: req.Message, FlagBits: 0}
 	msg.Message.ResponseTo = req.Message.RequestID
 	msg.Message.RequestID = newRequest()
-
+	Debug("meta %v \n", req.Meta)
 	if req.Meta != nil {
 		section := req.Meta[0].(bson.M)
 		ns := section["$db"]
@@ -188,7 +188,8 @@ func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
 			if section["find"] != nil {
 				col := section["find"]
 				filter := section["filter"]
-				rs := engine.query(dbname, col.(string), filter.(bson.M))
+				singleBatch := section["singleBatch"] == true
+				rs := engine.query(dbname, col.(string), filter.(bson.M), singleBatch)
 				Debug("query rs [%v]", rs)
 				msg.sections = []Section{rs}
 			} else if section["insert"] != nil {
@@ -216,6 +217,10 @@ func handle2013(req *M2013, engine MongoEngine) *M2013Reply {
 					rs := engine.update(dbname, col, req.Sections[0].(bson.M))
 					msg.sections = []Section{rs}
 				}
+			} else if section["count"] != nil {
+				col := section["count"].(string)
+				rs := engine.count(dbname, col, section)
+				msg.sections = []Section{rs}
 			}
 		} else {
 			//msg.sections = []Section{}

@@ -86,9 +86,10 @@ type MongoEngine interface {
 	listDatabases() bson.M
 	listCollections(section bson.M, dbname string) bson.M
 	command(utype string, cmd string, arg string) bson.M
-	insert(db string, col string, doc bson.A) bson.M
 	// https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst
-	query(db string, col string, query bson.M) bson.M
+	insert(db string, col string, doc bson.A) bson.M
+	query(db string, col string, query bson.M, singleBatch bool) bson.M
 	delete(db string, col string, opt bson.M) bson.M
 	update(db string, col string, opt bson.M) bson.M
+	count(db string, col string, opt bson.M) bson.M
 }

@@ -68,7 +68,7 @@ func (s *Simple) command(utype string, cmd string, arg string) bson.M {
 	case "getLog":
 		switch arg {
 		case "*":
-			return bson.M{"ok": 1, "names": []string{"startupWarnings"}}
+			return bson.M{"ok": 1, "names": []string{}}
 		case "startupWarnings":
 			return bson.M{"ok": 1, "totalLinesWritten": 0, "log": []string{}}
 		default:
@@ -165,7 +165,7 @@ func (s *Simple) delete(db string, col string, opt bson.M) bson.M {
 	return bson.M{"ok": 1, "n": n}
 }
 
-func (s *Simple) query(db string, col string, query bson.M) bson.M {
+func (s *Simple) query(db string, col string, query bson.M, singleBatch bool) bson.M {
 	collection := s.getDb(db, col)
 	docs := collection.docs
 	matchs := make(bson.A, 0)
@@ -173,6 +173,9 @@ func (s *Simple) query(db string, col string, query bson.M) bson.M {
 		m := isPatternMatch(d, query)
 		if m == true {
 			matchs = append(matchs, d)
+			if singleBatch {
+				break
+			}
 		}
 	}
 	return bson.M{
@@ -220,9 +223,24 @@ func (s *Simple) update(db string, col string, opt bson.M) bson.M {
 	}
 	if nModified == 0 && upsert {
 		n += 1
-		// create
+		// TODO create
 	}
 	rs["nModified"] = nModified
 	rs["n"] = n
 	return rs
+}
+
+func (s *Simple) count(db string, col string, opt bson.M) bson.M {
+	collection := s.getDb(db, col)
+	docs := collection.docs
+	query := opt["query"].(bson.M)
+	var n int32 = 0
+
+	for _, d := range docs {
+		m := isPatternMatch(d, query)
+		if m == true {
+			n += 1
+		}
+	}
+	return bson.M{"ok": 1, "n": n}
 }
