@@ -234,7 +234,7 @@ func (s *Simple) count(db string, col string, opt bson.M) bson.M {
 	collection := s.getDb(db, col)
 	docs := collection.docs
 	query := opt["query"].(bson.M)
-	var n int32 = 0
+	var n int = 0
 
 	for _, d := range docs {
 		m := isPatternMatch(d, query)
